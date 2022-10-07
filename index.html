@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>teste panda</title>
+</head>
+<body>
+
+    <h1>Após 10 segundos de vídeo você será redirecionado</h1>
+
+    <iframe id="panda-ea19c049-6735-4b8a-8f60-2168df8c4aaf" src="https://player-vz-ee87ef4f-55f.tv.pandavideo.com.br/embed/?v=ea19c049-6735-4b8a-8f60-2168df8c4aaf" style="border:none;" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture" allowfullscreen=true width="720" height="360"></iframe>
+
+    <p class="panda">opa opa</p>
+
+    <style> 
+        .panda {
+            display: none
+        }
+    </style>
+    <script>
+        function changePage() {
+            window.location.href = 'https://www.youtube.com';
+        }
+
+        const SECONDS_TO_DISPLAY = 10;
+        const CLASS_TO_DISPLAY = 'panda';
+        const IFRAME_ID = 'panda-ea19c049-6735-4b8a-8f60-2168df8c4aaf'
+        const API_ENDPOINT = 'https://player.pandavideo.com.br/api.v2.js'
+    
+        if(!document.querySelector(`script[src='${API_ENDPOINT}']`)) { 
+            let s = document.createElement('script'); 
+            s.src = API_ENDPOINT; 
+            s.async = true; 
+            document.head.appendChild(s);
+        }
+    
+        window.pandascripttag = window.pandascripttag || [];
+        window.pandascripttag.push(function () {
+            const p = new PandaPlayer(IFRAME_ID , {
+                onReady() {
+                    const el = document.querySelectorAll(`.${CLASS_TO_DISPLAY}`);
+                    p.onEvent(e => {
+                    const type = e.message
+                    if(type === 'panda_timeupdate'){
+                        const { currentTime, isMutedIndicator } = e;
+                        if (isMutedIndicator) return;
+                        if (currentTime < SECONDS_TO_DISPLAY) {
+                            el.forEach(e => {
+                                e.style.display = 'none'
+                            })
+                        } else if (currentTime > SECONDS_TO_DISPLAY) {
+                            el.forEach(e => {
+                                e.style.display = 'block'
+                                changePage();
+                            })
+                        }
+                    }
+                    })
+                }
+            });
+        })
+    </script>
+
+</body>
+</html>
